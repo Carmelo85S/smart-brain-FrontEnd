@@ -62,6 +62,11 @@ class App extends Component {
   }
 
   onButtonSubmit = () => {
+
+    if (this.state.input.trim() === '') {
+      return; 
+    }
+
     this.setState({imageUrl: this.state.input});
       fetch('https://smart-brain-backend-xjfd.onrender.com/imageurl', {
         method: 'post',
@@ -82,12 +87,15 @@ class App extends Component {
           })
             .then(response => response.json())
             .then(count => {
-              this.setState(Object.assign(this.state.user, { entries: count}))
+              if (response.outputs[0].data.regions) {
+                this.setState(Object.assign(this.state.user, { entries: count}))
+              }
             })
             .catch(console.log)
-
         }
-        this.displayFaceBox(this.calculateFaceLocation(response))
+        if (response.outputs[0].data.regions) {
+          this.displayFaceBox(this.calculateFaceLocation(response))
+        }
       })
       .catch(err => console.log(err));
   }
